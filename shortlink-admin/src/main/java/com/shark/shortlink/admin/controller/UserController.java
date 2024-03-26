@@ -4,8 +4,11 @@ package com.shark.shortlink.admin.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.common.convention.result.Results;
+import com.shark.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.shark.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.shark.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.shark.shortlink.admin.dto.resp.UserActualRespDTO;
+import com.shark.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.shark.shortlink.admin.dto.resp.UserRespDTO;
 import com.shark.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,30 @@ public class UserController {
         return Results.success();
     }
 
+    @PutMapping("/user")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO){
+        userService.update(userUpdateReqDTO);
+        return Results.success();
+    }
+
+    @PostMapping("/user/login")
+    public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO userLoginReqDTO){
+        return Results.success(userService.login(userLoginReqDTO));
+    }
+
+    /**
+     * 检查用户是否登录
+     */
+    @GetMapping("/user/check-login")
+    public Result<Boolean> checkLogin(@RequestParam("username") String username, @RequestParam("token") String token) {
+        return Results.success(userService.checkLogin(username, token));
+    }
+
+    @DeleteMapping("/user/logout")//需要删除redis的数据
+    public Result<Void> logout(@RequestParam("username") String username, @RequestParam("token") String token){
+        userService.logout(username,token);
+        return Results.success();
+    }
 
 
 }

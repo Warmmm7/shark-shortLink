@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class UserLoginRespDTO {
 
     /**
-     * 用户Token
+     * 用户
      */
     private String token;
 }
