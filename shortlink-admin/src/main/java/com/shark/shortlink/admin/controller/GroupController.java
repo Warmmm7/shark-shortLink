@@ -26,7 +26,7 @@ public class GroupController {
      */
     @PostMapping
     public Result<Void> saveGroup(@RequestBody GroupSaveReqDTO saveReqDTO){
-        groupService.saveGroup(saveReqDTO);
+        groupService.saveGroup(saveReqDTO.getName());
         return Results.success();
     }
 

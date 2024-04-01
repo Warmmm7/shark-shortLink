@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shark.shortlink.admin.common.biz.user.UserContext;
 import com.shark.shortlink.admin.dao.entity.GroupDO;
 import com.shark.shortlink.admin.dao.mapper.GroupMapper;
-import com.shark.shortlink.admin.dto.req.GroupSaveReqDTO;
 import com.shark.shortlink.admin.dto.req.GroupSortReqDTO;
 import com.shark.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import com.shark.shortlink.admin.dto.resp.GroupRespDTO;
@@ -18,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 短连接分组实现
@@ -27,22 +27,28 @@ import java.util.List;
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
 
     @Override
-    public void saveGroup(GroupSaveReqDTO groupSaveReqDTO) {
+    public void saveGroup(String groupName) {
+        saveGroup(UserContext.getUsername(), groupName);
+    }
+
+    @Override
+    public void saveGroup(String username, String groupName) {
 //        GroupDO groupDO = new GroupDO(); 可以用build方法
 //        groupDO.setName(groupSaveReqDTO.getName());
 //        groupDO.setGid(RandomUtil.randomString(6));
         String gid;
         do {
             gid = RandomUtil.randomString(6);
-        } while (!hasGid(gid));//避免生成重复gid
+        } while (!hasGid(username,gid));//避免生成重复gid
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
                 .sortOrder(0)
-                .username(UserContext.getUsername())
-                .name(groupSaveReqDTO.getName())
+                .username(username)
+                .name(groupName)
                 .build();
         baseMapper.insert(groupDO);
     }
+
 
     @Override
     public List<GroupRespDTO> listGroup() {
@@ -91,11 +97,10 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     }
 
 
-    private boolean hasGid(String gid) {
+    private boolean hasGid(String username, String gid) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
-                //TODO 设置用户名 之后用网关实现...
-                .eq(GroupDO::getUsername, UserContext.getUsername());
+                .eq(GroupDO::getUsername, Optional.ofNullable(username).orElse(UserContext.getUsername()));
         GroupDO hasGroupFlag = baseMapper.selectOne(queryWrapper);
         return hasGroupFlag == null;
     }

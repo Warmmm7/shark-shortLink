@@ -2,7 +2,6 @@ package com.shark.shortlink.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shark.shortlink.admin.dao.entity.GroupDO;
-import com.shark.shortlink.admin.dto.req.GroupSaveReqDTO;
 import com.shark.shortlink.admin.dto.req.GroupSortReqDTO;
 import com.shark.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import com.shark.shortlink.admin.dto.resp.GroupRespDTO;
@@ -11,11 +10,19 @@ import java.util.List;
 
 public interface GroupService extends IService<GroupDO> {
 
+
     /**
-     * 新增短连接分组
-     * @param groupSaveReqDTO 短连接分组名
+     * 新增短链接分组
+     * @param groupName 短链接分组名
      */
-    void saveGroup(GroupSaveReqDTO groupSaveReqDTO);
+    void saveGroup(String groupName);
+
+    /**
+     * 新增短链接分组
+     * @param username  用户名
+     * @param groupName 短链接分组名
+     */
+    void saveGroup(String username, String groupName);
 
     /**
      * 查询用户短连接分组集合

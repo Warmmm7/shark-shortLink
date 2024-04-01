@@ -17,6 +17,7 @@ import com.shark.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.shark.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.shark.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.shark.shortlink.admin.dto.resp.UserRespDTO;
+import com.shark.shortlink.admin.service.GroupService;
 import com.shark.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
@@ -43,6 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     public final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     public final RedissonClient redissonClient;
     public final StringRedisTemplate stringRedisTemplate;
+    public final GroupService groupService;
 
     public UserRespDTO getUserByUsername(String username) {
         LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.lambdaQuery(UserDO.class).eq(UserDO::getUsername, username);
@@ -76,6 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                     throw new ClientException(USER_EXIST);
                 }
                 userRegisterCachePenetrationBloomFilter.add(userRegisterReqDTO.getUsername());
+                groupService.saveGroup(userRegisterReqDTO.getUsername(),"默认分组");
                 return;
             }
             throw new ClientException(USER_NAME_EXIST);
