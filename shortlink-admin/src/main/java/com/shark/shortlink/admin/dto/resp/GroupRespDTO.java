@@ -28,4 +28,9 @@ public class GroupRespDTO {
      * 分组下短链接数量
      */
     private Integer shortLinkCount;
+
+    /**
+     * 当前分组下的短连接数量
+     */
+    private Integer shortCount;
 }
