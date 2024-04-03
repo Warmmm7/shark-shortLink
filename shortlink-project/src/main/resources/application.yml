@@ -19,3 +19,7 @@ spring:
       port: 6379
       password: 472020
       database: 7
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
