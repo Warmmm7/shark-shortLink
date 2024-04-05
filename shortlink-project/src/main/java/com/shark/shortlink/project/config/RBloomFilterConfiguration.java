@@ -15,7 +15,7 @@ public class RBloomFilterConfiguration {
     @Bean
     public RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter(RedissonClient redissonClient) {
         RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("shortUriCreateCachePenetrationBloomFilter");
-        cachePenetrationBloomFilter.tryInit(100000000L, 0.001);//初始化参数： 预估的布隆过滤器存储元素长度（使用数量）；误判率
+        cachePenetrationBloomFilter.tryInit(10000000L, 0.001);//初始化参数： 预估的布隆过滤器存储元素长度（使用数量）；误判率
         return cachePenetrationBloomFilter;
     }
 }

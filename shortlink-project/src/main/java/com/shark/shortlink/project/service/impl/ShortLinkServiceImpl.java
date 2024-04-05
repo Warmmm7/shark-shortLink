@@ -32,18 +32,21 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.shark.shortlink.project.common.constant.RedisKeyConstant.*;
@@ -61,16 +64,18 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final StringRedisTemplate stringRedisTemplate;
     private final RedissonClient redissonClient;
 
+    @Value("${short-link.domain.default}")
+    private String createShortLinkDefaultDomain;
 
     @Override
     public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO shortLinkCreateReqDTO) {
         String shortLinkSuffix = generateSuffix(shortLinkCreateReqDTO);
-        String fullShortUrl = StrBuilder.create(shortLinkCreateReqDTO.getDomain())
+        String fullShortUrl = StrBuilder.create(createShortLinkDefaultDomain)
                 .append("/")
                 .append(shortLinkSuffix)
                 .toString();
         ShortLinkDO shortLinkDO = ShortLinkDO.builder()
-                .domain(shortLinkCreateReqDTO.getDomain())
+                .domain(createShortLinkDefaultDomain)
                 .originUrl(shortLinkCreateReqDTO.getOriginUrl())
                 .gid(shortLinkCreateReqDTO.getGid())
                 .createdType(shortLinkCreateReqDTO.getCreatedType())
@@ -80,6 +85,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .shortUri(shortLinkSuffix)
                 .enableStatus(0)
                 .fullShortUrl(fullShortUrl)
+                .favicon(getFavicon(shortLinkCreateReqDTO.getOriginUrl()))
                 .build();
         ShortLinkGotoDO linkGotoDO = ShortLinkGotoDO.builder()
                 .fullShortUrl(fullShortUrl)
@@ -187,10 +193,14 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     @SneakyThrows
     @Override
     public void restoreUrl(String shortUri, ServletRequest request, ServletResponse response) {
-        String serverName = request.getServerName();
-        if(StrUtil.equals(serverName,"127.0.0.1")){
-            serverName = "shark.t";
-        }
+        //String serverName = request.getServerName();
+        String serverName = "shark.t";
+        String serverPort = Optional.of(request.getServerPort())
+                .filter(each -> !Objects.equals(each, 80))
+                .map(String::valueOf)
+                .map(each -> ":" + each)
+                .orElse("");
+        //String fullShortUrl = serverName + serverPort + "/" + shortUri;
         String fullShortUrl = serverName + "/" + shortUri;
         String originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
         if(StrUtil.isNotBlank(originalLink)){
@@ -264,4 +274,23 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         }
         return shortUri;
     }
+
+    @SneakyThrows
+    private String getFavicon(String url) {
+        URL targetUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
+        connection.setRequestMethod("GET");
+        connection.connect();
+        int responseCode = connection.getResponseCode();
+        if (HttpURLConnection.HTTP_OK == responseCode) {
+            Document document = Jsoup.connect(url).get();
+            Element faviconLink = document.select("link[rel~=(?i)^(shortcut )?icon]").first();
+            if (faviconLink != null) {
+                return faviconLink.attr("abs:href");
+            }
+        }
+        return null;
+    }
+
+
 }

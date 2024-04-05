@@ -9,7 +9,7 @@ import com.shark.shortlink.admin.common.convention.exception.ServiceException;
 import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.dao.entity.GroupDO;
 import com.shark.shortlink.admin.dao.mapper.GroupMapper;
-import com.shark.shortlink.admin.dto.req.RecycleBinPageReqDTO;
+import com.shark.shortlink.admin.remote.dto.req.RecycleBinPageReqDTO;
 import com.shark.shortlink.admin.remote.ShortLinkRemoteService;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import com.shark.shortlink.admin.service.RecycleBinService;

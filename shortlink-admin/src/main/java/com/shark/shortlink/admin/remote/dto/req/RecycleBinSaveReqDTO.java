@@ -1,4 +1,4 @@
-package com.shark.shortlink.admin.dto.req;
+package com.shark.shortlink.admin.remote.dto.req;
 
 import lombok.Data;
 

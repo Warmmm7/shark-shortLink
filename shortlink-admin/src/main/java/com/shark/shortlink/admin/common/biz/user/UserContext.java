@@ -13,7 +13,6 @@ public final class UserContext {
 
     /**
      * 设置用户至上下文
-     *
      * @param user 用户详情信息
      */
     public static void setUser(UserInfoDTO user) {
@@ -22,7 +21,6 @@ public final class UserContext {
 
     /**
      * 获取上下文中用户 ID
-     *
      * @return 用户 ID
      */
     public static String getUserId() {
@@ -42,7 +40,6 @@ public final class UserContext {
 
     /**
      * 获取上下文中用户真实姓名
-     *
      * @return 用户真实姓名
      */
     public static String getRealName() {
@@ -52,7 +49,6 @@ public final class UserContext {
 
     /**
      * 获取上下文中用户 Token
-     *
      * @return 用户 Token
      */
     public static String getToken() {

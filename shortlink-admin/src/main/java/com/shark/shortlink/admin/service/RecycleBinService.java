@@ -2,7 +2,7 @@ package com.shark.shortlink.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shark.shortlink.admin.common.convention.result.Result;
-import com.shark.shortlink.admin.dto.req.RecycleBinPageReqDTO;
+import com.shark.shortlink.admin.remote.dto.req.RecycleBinPageReqDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 
 /**
