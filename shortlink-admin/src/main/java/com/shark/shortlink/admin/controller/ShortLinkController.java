@@ -3,13 +3,17 @@ package com.shark.shortlink.admin.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.common.convention.result.Results;
-import com.shark.shortlink.admin.remote.ShortLinkRemoteService;
 import com.shark.shortlink.admin.remote.dto.req.ShortLinkCreateReqDTO;
 import com.shark.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
+import com.shark.shortlink.admin.remote.dto.req.ShortLinkUpdateReqDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
-import com.shark.shortlink.admin.remote.dto.req.ShortLinkUpdateReqDTO;
-import org.springframework.web.bind.annotation.*;
+import com.shark.shortlink.admin.remote.service.ShortLinkRemoteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 短链接后管控制层
@@ -18,13 +22,14 @@ import org.springframework.web.bind.annotation.*;
 public class ShortLinkController {
 
 
-
-
     /**
      * 后续重构为 SpringCloud Feign 调用
      */
-    ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
-    };
+    private final ShortLinkRemoteService shortLinkRemoteService;
+    @Autowired
+    public ShortLinkController(ShortLinkRemoteService shortLinkRemoteService) {
+        this.shortLinkRemoteService = shortLinkRemoteService;
+    }
 
     /**
      * 创建短链接

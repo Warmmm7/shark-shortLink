@@ -1,11 +1,11 @@
 server:
-  port: 8001
+  port: 0
 
 spring:
   datasource:
-    username: root
-    password: 472020
-    url: jdbc:mysql://8.137.123.85:3306/shark-link?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+    username: *
+    password: *
+    url: jdbc:mysql://*/shark-link?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-test-query: select 1
@@ -15,9 +15,9 @@ spring:
       minimum-idle: 5
   data:
     redis:
-      host: 8.137.123.85
-      port: 6379
-      password: 472020
+      host: *
+      port: 0
+      password: *
       database: 7
   mvc:
     view:
@@ -26,4 +26,4 @@ spring:
 
 short-link:
   domain:
-    default: shark.t
+    default: *
