@@ -196,10 +196,10 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         //String serverName = request.getServerName();
         String serverName = createShortLinkDefaultDomain;
         String serverPort = Optional.of(request.getServerPort())
-                .filter(each -> !Objects.equals(each, 80))
+                .filter(each -> !Objects.equals(each, 80))//过滤端口80的
                 .map(String::valueOf)
                 .map(each -> ":" + each)
-                .orElse("");
+                .orElse("");//如果端口号是80，则返回空字符串
         //String fullShortUrl = serverName + serverPort + "/" + shortUri;
         String fullShortUrl = serverName + "/" + shortUri;
         String originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));

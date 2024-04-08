@@ -41,6 +41,16 @@ public class UserTransmitFilter implements Filter {
             "/api/short-link/admin/v1/user/has-username"
     );
 
+    /**
+     *
+     * @param servletRequest  The request to process
+     * @param servletResponse The response associated with the request
+     * @param filterChain    Provides access to the next filter in the chain for this filter to pass the request and response
+     *                     to for further processing
+     *
+     * @throws IOException
+     * @throws ServletException
+     */
     @SneakyThrows
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -48,7 +58,7 @@ public class UserTransmitFilter implements Filter {
         String requestURI = httpServletRequest.getRequestURI();
         if (!IGNORE_URI.contains(requestURI)) {
             String method = httpServletRequest.getMethod();
-            if (!(Objects.equals(requestURI, "/api/short-link/admin/v1/user") && Objects.equals(method, "POST"))) {
+            if (!(Objects.equals(requestURI, "/api/short-link/admin/v1/user") && Objects.equals(method, "POST"))) {//排除注册uri
                 String username = httpServletRequest.getHeader("username");
                 String token = httpServletRequest.getHeader("token");
                 if (!StrUtil.isAllNotBlank(username, token)) {
@@ -57,7 +67,7 @@ public class UserTransmitFilter implements Filter {
                 }
                 Object userInfoJsonStr;
                 try {
-                    userInfoJsonStr = stringRedisTemplate.opsForHash().get(USER_LOGIN_KEY + username, token);
+                    userInfoJsonStr = stringRedisTemplate.opsForHash().get(USER_LOGIN_KEY + username, token);//key和字段
                     if (userInfoJsonStr == null) {
                         throw new ClientException(USER_TOKEN_FAIL);
                     }

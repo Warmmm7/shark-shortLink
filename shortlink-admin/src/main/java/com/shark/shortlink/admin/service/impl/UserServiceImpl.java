@@ -61,6 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return !userRegisterCachePenetrationBloomFilter.contains(username);
     }
 
+
     @Override
     public void register(UserRegisterReqDTO userRegisterReqDTO) {
         if (!hasUsername(userRegisterReqDTO.getUsername())) {
@@ -75,24 +76,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                         throw new ClientException(USER_SAVE_ERROR);
                     }
                 } catch (DuplicateKeyException ex) {
-                    throw new ClientException(USER_EXIST);
+                    throw new ClientException(USER_EXIST);//user是唯一的 用户记录存在了
                 }
                 userRegisterCachePenetrationBloomFilter.add(userRegisterReqDTO.getUsername());
-                groupService.saveGroup(userRegisterReqDTO.getUsername(),"默认分组");
+                groupService.saveGroup(userRegisterReqDTO.getUsername(), "默认分组");
                 return;
             }
-            throw new ClientException(USER_NAME_EXIST);
+            throw new ClientException(USER_NAME_EXIST);//没获取到锁 q其他线程操作了
         } finally {
             lock.unlock();
         }
     }
+
+
 
     /**
      * 更新用户信息
      * @param userUpdateReqDTO
      */
     public void update(UserUpdateReqDTO userUpdateReqDTO) {
-        //TODO 验证当前登陆用户是否为登陆用户
         LambdaQueryWrapper<UserDO> updateWrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, userUpdateReqDTO.getUsername());
         baseMapper.update(BeanUtil.toBean(userUpdateReqDTO,UserDO.class),updateWrapper);
@@ -119,7 +121,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
          *  KEY:TOKE
          *  Val:用户信息 toJson
          */
-        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash()
+        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash()//从缓存里获取entry
                 .entries(USER_LOGIN_KEY + userLoginReqDTO.getUsername());
         if (CollUtil.isNotEmpty(hasLoginMap)) {//不为空 刷新时间
             stringRedisTemplate.expire(USER_LOGIN_KEY + userLoginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
