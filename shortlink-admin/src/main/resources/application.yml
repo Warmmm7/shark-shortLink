@@ -1,21 +1,14 @@
 server:
-  port: 0
+  port: 8002
 
 spring:
   datasource:
-    username: 0
-    password: 0
-    url: jdbc:mysql://*/shark-link?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      connection-test-query: select 1
-      connection-timeout: 20000
-      idle-timeout: 300000
-      maximum-pool-size: 5
-      minimum-idle: 5
+
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
   data:
     redis:
-      host: 0
+      host: *
       port: 0
       password: *
       database: 7
@@ -23,17 +16,16 @@ spring:
 short-link:
   remote:
     createUrl:
-      default: *
+      default: http://127.0.0.1:8001/api/short-link/v1/create
     pageUrl:
-      default: *
+      default: http://127.0.0.1:8001/api/short-link/v1/page
     updateUrl:
-      default: *
+      default: http://127.0.0.1:8001/api/short-link/v1/update
     getTitleUrl:
-      default: *
+      default: http://127.0.0.1:8001/short-link/v1/title?url=
     recycleSaveUrl:
-      default: *
+      default: http://127.0.0.1:8001/api/short-link/v1/recycle-bin/save
     recyclePageUrl:
-      default: *
+      default: http://127.0.0.1:8001/api/short-link/v1/recycle-bin/page
     recycleRecoverUrl:
-      default: *
-
+      default: http://127.0.0.1:8001/api/short-link/v1/recycle-bin/recover
