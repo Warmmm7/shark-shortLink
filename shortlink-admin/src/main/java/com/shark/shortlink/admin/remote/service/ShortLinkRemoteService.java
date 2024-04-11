@@ -5,6 +5,7 @@ import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.remote.dto.req.*;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
+import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsRespDTO;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -68,4 +69,11 @@ public interface ShortLinkRemoteService {
      * @return 短链接监控信息
      */
     Result<ShortLinkStatsRespDTO> oneShortLinkStats(ShortLinkStatsReqDTO requestParam);
+
+    /**
+     * 访问单个短链接指定时间内监控访问记录数据
+     * @param requestParam 访问短链接监控访问记录请求参数
+     * @return 短链接监控访问记录信息
+     */
+    Result<IPage<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam);
 }

@@ -9,6 +9,7 @@ import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.remote.dto.req.*;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
+import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsRespDTO;
 import com.shark.shortlink.admin.remote.service.ShortLinkRemoteService;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,8 @@ public class ShortLinkRemoteServiceImpl implements ShortLinkRemoteService {
     private String remoteRecycleRecoverShortLinkDefaultUrl;
     @Value("${short-link.remote.statsUrl.default}")
     private String remoteStatsShortLinkDefaultUrl;
+    @Value("${short-link.remote.statsAccessUrl.default}")
+    private String remoteStatsAccessShortLinkDefaultUrl;
 
 
     /**
@@ -58,6 +61,7 @@ public class ShortLinkRemoteServiceImpl implements ShortLinkRemoteService {
     public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO shortLinkPageReqDTO) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("gid", shortLinkPageReqDTO.getGid());
+        requestMap.put("orderTag", shortLinkPageReqDTO.getOrderTag());
         requestMap.put("current", shortLinkPageReqDTO.getCurrent());
         requestMap.put("size", shortLinkPageReqDTO.getSize());
         String resultPageStr = HttpUtil.get(remotePageShortLinkDefaultUrl, requestMap);
@@ -130,6 +134,22 @@ public class ShortLinkRemoteServiceImpl implements ShortLinkRemoteService {
         String resultBodyStr = HttpUtil.get(remoteStatsShortLinkDefaultUrl, BeanUtil.beanToMap(requestParam));
         return JSON.parseObject(resultBodyStr, new TypeReference<>() {
         });
+    }
+
+    /**
+     * 访问单个短链接指定时间内监控访问记录数据
+     * @param requestParam 访问短链接监控访问记录请求参数
+     * @return 短链接监控访问记录信息
+     */
+    @Override
+    public Result<IPage<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
+        Map<String, Object> stringObjectMap = BeanUtil.beanToMap(requestParam, false, true);
+        stringObjectMap.remove("orders");
+        stringObjectMap.remove("records");
+        String resultBodyStr = HttpUtil.get(remoteStatsAccessShortLinkDefaultUrl, stringObjectMap);
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
+
     }
 
 }
