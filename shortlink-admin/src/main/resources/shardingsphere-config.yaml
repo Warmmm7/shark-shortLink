@@ -2,9 +2,9 @@ dataSources:
   ds_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://*useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
-    username: *
-    password: *
+    jdbcUrl: jdbc:mysql://8.137.123.85:3306/shark-link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 472020
 
 rules:
   - !SHARDING
@@ -13,14 +13,14 @@ rules:
         actualDataNodes: ds_0.t_user_${0..15}
         tableStrategy:
           standard:
-            shardingColumn: username #分片键
-            shardingAlgorithmName: user_table_hash_mod #哈希去模分片
-    t_group:
-      actualDataNodes: ds_0.t_group_${0..15}
-      tableStrategy:
-        standard:
-          shardingColumn: username
-          shardingAlgorithmName: group_table_hash_mod
+            shardingColumn: username
+            shardingAlgorithmName: user_table_hash_mod
+      t_group:
+        actualDataNodes: ds_0.t_group_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: username
+            shardingAlgorithmName: group_table_hash_mod
     shardingAlgorithms:
       user_table_hash_mod:
         type: HASH_MOD
@@ -30,5 +30,21 @@ rules:
         type: HASH_MOD
         props:
           sharding-count: 16
+  - !ENCRYPT
+    tables:
+      t_user:
+        columns:
+          phone:
+            cipherColumn: phone
+            encryptorName: common_encryptor
+          mail:
+            cipherColumn: mail
+            encryptorName: common_encryptor
+        queryWithCipherColumn: true
+    encryptors:
+      common_encryptor:
+        type: AES
+        props:
+          aes-key-value: d6oadClrrb9A3GWo
 props:
   sql-show: true
