@@ -3,10 +3,7 @@ package com.shark.shortlink.admin.remote.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.remote.dto.req.*;
-import com.shark.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;
-import com.shark.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
-import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsAccessRecordRespDTO;
-import com.shark.shortlink.admin.remote.dto.resp.ShortLinkStatsRespDTO;
+import com.shark.shortlink.admin.remote.dto.resp.*;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -76,4 +73,25 @@ public interface ShortLinkRemoteService {
      * @return 短链接监控访问记录信息
      */
     Result<IPage<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam);
+
+    /**
+     * 访问分组短链接指定时间内监控数据
+     * @param requestParam 访分组问短链接监控请求参数
+     * @return 分组短链接监控信息
+     */
+    Result<ShortLinkStatsRespDTO> groupShortLinkStats(ShortLinkGroupStatsReqDTO requestParam);
+
+    /**
+     * 访问分组短链接指定时间内监控访问记录数据
+     * @param requestParam 访问分组短链接监控访问记录请求参数
+     * @return 分组短链接监控访问记录信息
+     */
+    Result<IPage<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam);
+
+    /**
+     * 批量创建短链接
+     * @param requestParam 批量创建短链接请求参数
+     * @return 短链接批量创建响应
+     */
+    Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO requestParam);
 }
