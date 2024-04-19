@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class RecycleBinController {
 
-    /**
-     * 后续重构为 SpringCloud Feign 调用
-     */
+
     private final RecycleBinService recycleBinService;
     private final ShortLinkRemoteService shortLinkRemoteService;
 

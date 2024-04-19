@@ -5,6 +5,7 @@ import com.shark.shortlink.project.common.convention.result.Result;
 import com.shark.shortlink.project.common.convention.result.Results;
 import com.shark.shortlink.project.dto.req.RecycleBinPageReqDTO;
 import com.shark.shortlink.project.dto.req.RecycleBinRecoverReqDTO;
+import com.shark.shortlink.project.dto.req.RecycleBinRemoveReqDTO;
 import com.shark.shortlink.project.dto.req.RecycleBinSaveReqDTO;
 import com.shark.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.shark.shortlink.project.service.RecycleBinService;
@@ -47,6 +48,15 @@ public class RecycleBinController {
     @PostMapping("/api/short-link/v1/recycle-bin/recover")
     public Result<Void> recoverRecycleBin(@RequestBody RecycleBinRecoverReqDTO recycleBinRecoverReqDTO) {
         recycleBinService.recoverRecycleBin(recycleBinRecoverReqDTO);
+        return Results.success();
+    }
+
+    /**
+     * 移除短链接
+     */
+    @PostMapping("/api/short-link/v1/recycle-bin/remove")
+    public Result<Void> removeRecycleBin(@RequestBody RecycleBinRemoveReqDTO requestParam) {
+        recycleBinService.removeRecycleBin(requestParam);
         return Results.success();
     }
 }

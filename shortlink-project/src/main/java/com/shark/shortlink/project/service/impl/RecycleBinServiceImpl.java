@@ -10,6 +10,7 @@ import com.shark.shortlink.project.dao.entity.ShortLinkDO;
 import com.shark.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.shark.shortlink.project.dto.req.RecycleBinPageReqDTO;
 import com.shark.shortlink.project.dto.req.RecycleBinRecoverReqDTO;
+import com.shark.shortlink.project.dto.req.RecycleBinRemoveReqDTO;
 import com.shark.shortlink.project.dto.req.RecycleBinSaveReqDTO;
 import com.shark.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.shark.shortlink.project.service.RecycleBinService;
@@ -70,5 +71,20 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
                 .build();
         baseMapper.update(shortLinkDO, updateWrapper);
         stringRedisTemplate.delete(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, recycleBinRecoverReqDTO.getFullShortUrl()));
+    }
+
+    @Override
+    public void removeRecycleBin(RecycleBinRemoveReqDTO requestParam) {
+        LambdaUpdateWrapper<ShortLinkDO> updateWrapper = Wrappers.lambdaUpdate(ShortLinkDO.class)
+                .eq(ShortLinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(ShortLinkDO::getGid, requestParam.getGid())
+                .eq(ShortLinkDO::getEnableStatus, 1)
+                .eq(ShortLinkDO::getDelTime, 0L)
+                .eq(ShortLinkDO::getDelFlag, 0);
+        ShortLinkDO delShortLinkDO = ShortLinkDO.builder()
+                .delTime(System.currentTimeMillis())
+                .build();
+        delShortLinkDO.setDelFlag(1);
+        baseMapper.update(delShortLinkDO, updateWrapper);
     }
 }
