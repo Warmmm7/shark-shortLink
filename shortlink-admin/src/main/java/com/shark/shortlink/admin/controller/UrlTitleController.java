@@ -1,7 +1,7 @@
 package com.shark.shortlink.admin.controller;
 
 import com.shark.shortlink.admin.common.convention.result.Result;
-import com.shark.shortlink.admin.remote.service.ShortLinkRemoteService;
+import com.shark.shortlink.admin.remote.service.ShortLinkActualRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UrlTitleController {
 
     /**
-     * 后续重构为 SpringCloud Feign 调用
+     * 重构为 SpringCloud Feign 调用
      */
-    private final ShortLinkRemoteService shortLinkRemoteService;
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
     @Autowired
-    public UrlTitleController(ShortLinkRemoteService shortLinkRemoteService) {
-        this.shortLinkRemoteService = shortLinkRemoteService;
+    public UrlTitleController(ShortLinkActualRemoteService shortLinkActualRemoteService) {
+        this.shortLinkActualRemoteService = shortLinkActualRemoteService;
     }
 
     /**
@@ -28,6 +28,6 @@ public class UrlTitleController {
      */
     @GetMapping("/api/short-link/admin/v1/title")
     public Result<String> getTitleByUrl(@RequestParam("url") String url) {
-        return shortLinkRemoteService.getTitleByUrl(url);
+        return shortLinkActualRemoteService.getTitleByUrl(url);
     }
 }

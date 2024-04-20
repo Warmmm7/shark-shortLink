@@ -9,11 +9,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shark.shortlink.admin.common.biz.user.UserContext;
 import com.shark.shortlink.admin.common.convention.exception.ClientException;
+import com.shark.shortlink.admin.common.convention.result.Result;
 import com.shark.shortlink.admin.dao.entity.GroupDO;
 import com.shark.shortlink.admin.dao.mapper.GroupMapper;
 import com.shark.shortlink.admin.dto.req.GroupSortReqDTO;
 import com.shark.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import com.shark.shortlink.admin.dto.resp.GroupRespDTO;
+import com.shark.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
+import com.shark.shortlink.admin.remote.service.ShortLinkActualRemoteService;
 import com.shark.shortlink.admin.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.shark.shortlink.admin.common.constant.RedisCacheConstant.LOCK_GROUP_CREATE_KEY;
@@ -36,6 +40,7 @@ import static com.shark.shortlink.admin.common.constant.RedisCacheConstant.LOCK_
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
 
     private final RedissonClient redissonClient;
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
     @Value("${short-link.group.max-num}")
     private Integer groupMaxNum;
 
@@ -76,14 +81,24 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     }
 
 
+
     @Override
     public List<GroupRespDTO> listGroup() {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
-                .eq(GroupDO::getUsername, UserContext.getUsername())
                 .eq(GroupDO::getDelFlag, 0)
+                .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
-        return BeanUtil.copyToList(groupDOList,GroupRespDTO.class);
+        Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkActualRemoteService
+                .listGroupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
+        List<GroupRespDTO> shortLinkGroupRespDTOList = BeanUtil.copyToList(groupDOList, GroupRespDTO.class);
+        shortLinkGroupRespDTOList.forEach(each -> {
+            Optional<ShortLinkGroupCountQueryRespDTO> first = listResult.getData().stream()
+                    .filter(item -> Objects.equals(item.getGid(), each.getGid()))
+                    .findFirst();
+            first.ifPresent(item -> each.setShortLinkCount(first.get().getShortLinkCount()));
+        });
+        return shortLinkGroupRespDTOList;
     }
 
     @Override
