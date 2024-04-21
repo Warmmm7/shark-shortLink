@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static com.shark.shortlink.project.common.constant.RedisKeyConstant.LOCK_GID_UPDATE_KEY;
+import static com.shark.shortlink.project.common.constant.ShortLinkConstant.GAODEMAP_REMOTE_URL;
 
 /**
  * 短链接监控状态保存消息队列消费者
@@ -117,7 +118,7 @@ public class ShortLinkStatsSaveConsumer implements StreamListener<String, MapRec
             Map<String, Object> localeParamMap = new HashMap<>();
             localeParamMap.put("key", statsLocaleGaoDemapKey);
             localeParamMap.put("ip", statsRecord.getRemoteAddr());
-            String localeResultStr = HttpUtil.get(statsLocaleGaoDemapKey, localeParamMap);
+            String localeResultStr = HttpUtil.get(GAODEMAP_REMOTE_URL, localeParamMap);
             JSONObject localeResultObj = JSON.parseObject(localeResultStr);
             String infoCode = localeResultObj.getString("infocode");
             String actualProvince = "未知";

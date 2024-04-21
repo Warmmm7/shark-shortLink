@@ -153,19 +153,16 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     }
 
     @Override
-    public List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> gids) {
+    public List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> requestParam) {
         QueryWrapper<ShortLinkDO> queryWrapper = Wrappers.query(new ShortLinkDO())
                 .select("gid as gid, count(*) as shortLinkCount")
-                .in("gid", gids)
+                .in("gid", requestParam)
                 .eq("enable_status", 0)
                 .eq("del_flag", 0)
                 .eq("del_time", 0L)
-                .eq("del_flag", 0)
                 .groupBy("gid");
         List<Map<String, Object>> shortLinkDOList = baseMapper.selectMaps(queryWrapper);
         return BeanUtil.copyToList(shortLinkDOList, ShortLinkGroupCountQueryRespDTO.class);
-
-
     }
 
     @Transactional(rollbackFor = Exception.class)

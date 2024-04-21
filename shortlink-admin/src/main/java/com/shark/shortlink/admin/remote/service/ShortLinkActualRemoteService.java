@@ -71,7 +71,6 @@ public interface ShortLinkActualRemoteService {
 
     /**
      * 查询分组短链接总量
-     *
      * @param requestParam 分组短链接总量请求参数
      * @return 查询分组短链接总量响应
      */

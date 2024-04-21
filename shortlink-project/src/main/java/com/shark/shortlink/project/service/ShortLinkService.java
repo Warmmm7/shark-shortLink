@@ -36,11 +36,11 @@ public interface ShortLinkService extends IService<ShortLinkDO> {
     IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO shortLinkPageReqDTO);
 
     /**
-     * 查询短链接分组内的链接数量
-     * @param gids 分组标识
-     * @return
+     * 查询短链接分组内数量
+     * @param requestParam 查询短链接分组内数量请求参数
+     * @return 查询短链接分组内数量响应
      */
-    List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> gids);
+    List<ShortLinkGroupCountQueryRespDTO> listGroupShortLinkCount(List<String> requestParam);
 
     /**
      * 更新短链接信息
