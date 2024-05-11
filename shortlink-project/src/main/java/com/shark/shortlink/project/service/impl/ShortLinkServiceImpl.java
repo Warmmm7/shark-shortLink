@@ -117,14 +117,8 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         try {
             baseMapper.insert(shortLinkDO);
             shortLinkGotoMapper.insert(linkGotoDO);
-        } catch (DuplicateKeyException e) {//如有有误报情况  缓存没有 再查查数据库
-            LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
-                    .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
-            ShortLinkDO hasShortLinkDO = baseMapper.selectOne(queryWrapper);
-            if (hasShortLinkDO != null) {
-                log.warn("短连接:{}重复入库", fullShortUrl);
-                throw new ServiceException("短连接重复生成！");
-            }
+        } catch (DuplicateKeyException e) {
+            throw new ServiceException(String.format("短链接:%s重复生成了>-<",fullShortUrl));
         }
         stringRedisTemplate.opsForValue().set( //缓存预热
                 String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),

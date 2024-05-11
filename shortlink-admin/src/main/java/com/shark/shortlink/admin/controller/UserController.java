@@ -46,6 +46,11 @@ public class UserController {
         return Results.success(userService.hasUsername(username));
     }
 
+    /**
+     * 注册用户
+     * @param userRegisterReqDTO 用户注册传入参数
+     * @return
+     */
     @PostMapping("/user")
     public Result<Void> register(@RequestBody UserRegisterReqDTO userRegisterReqDTO){
         userService.register(userRegisterReqDTO);

@@ -121,8 +121,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
          *  KEY:TOKE
          *  Val:用户信息 toJson
          */
-        Map<Object, Object> hasLoginMap = stringRedisTemplate.opsForHash()//从缓存里获取entry
-                .entries(USER_LOGIN_KEY + userLoginReqDTO.getUsername());
+        Map<Object, Object> hasLoginMap = stringRedisTemplate
+                .opsForHash().entries(USER_LOGIN_KEY + userLoginReqDTO.getUsername()); //检查用户是否登陆过
+
         if (CollUtil.isNotEmpty(hasLoginMap)) {
             stringRedisTemplate.expire(USER_LOGIN_KEY + userLoginReqDTO.getUsername(), 30L, TimeUnit.MINUTES);
             String token = hasLoginMap.keySet().stream()//获取 Hash 中的第一个键（即 token）

@@ -27,7 +27,7 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     private final GroupMapper groupMapper;
     private final ShortLinkActualRemoteService shortLinkActualRemoteService;
     /**
-     * 重构为 SpringCloud Feign 调用
+     * SpringCloud Feign 调用
      */
 
     @Override

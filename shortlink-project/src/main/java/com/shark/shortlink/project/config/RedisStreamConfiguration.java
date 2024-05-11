@@ -33,7 +33,7 @@ public class RedisStreamConfiguration {
     private final ShortLinkStatsSaveConsumer shortLinkStatsSaveConsumer;
 
     @Bean
-    public ExecutorService asyncStreamConsumer() {
+    public ExecutorService asyncStreamConsumer() { // 创建异步消息消费者线程池的Bean
         AtomicInteger index = new AtomicInteger();
         int processors = Runtime.getRuntime().availableProcessors();
         return new ThreadPoolExecutor(processors,
@@ -50,8 +50,9 @@ public class RedisStreamConfiguration {
         );
     }
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Bean(initMethod = "start", destroyMethod = "stop")//消息监听容器的Bean
     public StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(ExecutorService asyncStreamConsumer) {
+        // 创建 StreamMessageListenerContainer的选项
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options =
                 StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                         .builder()
@@ -63,7 +64,8 @@ public class RedisStreamConfiguration {
                         .pollTimeout(Duration.ofSeconds(3))
                         .build();
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer =
-                StreamMessageListenerContainer.create(redisConnectionFactory, options);
+                StreamMessageListenerContainer.create(redisConnectionFactory, options);// 创建 Redis Stream 消息监听容器
+        //指定消费者组和消费者名称，以及起始消费位置和消费者
         streamMessageListenerContainer.receiveAutoAck(Consumer.from(SHORT_LINK_STATS_STREAM_GROUP_KEY, "stats-consumer"),
                 StreamOffset.create(SHORT_LINK_STATS_STREAM_TOPIC_KEY, ReadOffset.lastConsumed()), shortLinkStatsSaveConsumer);
         return streamMessageListenerContainer;

@@ -36,9 +36,9 @@ public class TokenValidateGatewayFilterFactory extends AbstractGatewayFilterFact
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(Config config) { //实现apply方法
         return (exchange, chain) -> {
-            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpRequest request = exchange.getRequest(); //获取当前请求
             String requestPath = request.getPath().toString();
             String requestMethod = request.getMethod().name();
             if (!isPathInWhiteList(requestPath, requestMethod, config.getWhitePathList())) {
@@ -47,7 +47,7 @@ public class TokenValidateGatewayFilterFactory extends AbstractGatewayFilterFact
                 Object userInfo;
                 if (StringUtils.hasText(username) && StringUtils.hasText(token) && (userInfo = stringRedisTemplate.opsForHash().get("short-link:login:" + username, token)) != null) {
                     JSONObject userInfoJsonObject = JSON.parseObject(userInfo.toString());
-                    ServerHttpRequest.Builder builder = exchange.getRequest().mutate().headers(httpHeaders -> {
+                    ServerHttpRequest.Builder builder = exchange.getRequest().mutate().headers(httpHeaders -> {// 构建新的请求，添加 userId 和 realName 到请求头中
                         httpHeaders.set("userId", userInfoJsonObject.getString("id"));
                         httpHeaders.set("realName", URLEncoder.encode(userInfoJsonObject.getString("realName"), StandardCharsets.UTF_8));
                     });
